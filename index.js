@@ -1,8 +1,8 @@
 const mineflayer = require('mineflayer');
 
 // Server configuration
-const SERVER_HOST = 'mc.stemalex.com';
-const SERVER_PORT = 23267;
+const SERVER_HOST = 'mc.auva.dev';
+const SERVER_PORT = 12345;
 
 // Bot configurations - 3 bots with Minecraft-style names
 const botConfigs = [
