@@ -1,20 +1,23 @@
+require('dotenv').config();
 const mineflayer = require('mineflayer');
 
-// Server configuration
-const SERVER_HOST = 'mc.auva.dev';
-const SERVER_PORT = 12345;
+// ─── Configuration ──────────────────────────────────────────────────────────────
+const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
+const SERVER_PORT = parseInt(process.env.SERVER_PORT, 10) || 25565;
+const RECONNECT_DELAY = parseInt(process.env.RECONNECT_DELAY, 10) || 30000;
+const CONNECTION_DELAY = parseInt(process.env.CONNECTION_DELAY, 10) || 5000;
 
-// Bot configurations - 3 bots with Minecraft-style names
-const botConfigs = [
-    { username: 'DragonSlayer77' },
-    { username: 'ShadowNinjaXD' },
-    { username: 'EnderLegend99' }
-];
+// Bot usernames - configurable via .env (comma-separated) or defaults
+const BOT_USERNAMES = process.env.BOT_USERNAMES
+    ? process.env.BOT_USERNAMES.split(',').map(u => u.trim())
+    : ['DragonSlayer77', 'ShadowNinjaXD', 'EnderLegend99'];
 
-// Store active bots
+const botConfigs = BOT_USERNAMES.map(username => ({ username }));
+
+// ─── Active Bots ────────────────────────────────────────────────────────────────
 const activeBots = [];
 
-// Random movement function
+// ─── Random Movement ────────────────────────────────────────────────────────────
 function startRandomMovement(bot) {
     const movements = ['forward', 'back', 'left', 'right'];
 
@@ -58,7 +61,7 @@ function startRandomMovement(bot) {
     }, 10000);
 }
 
-// Create a bot
+// ─── Bot Factory ────────────────────────────────────────────────────────────────
 function createBot(config, index) {
     console.log(`[${config.username}] Connecting to ${SERVER_HOST}:${SERVER_PORT}...`);
 
@@ -84,20 +87,20 @@ function createBot(config, index) {
 
     bot.on('kicked', (reason) => {
         console.log(`[${config.username}] ✗ Kicked: ${reason}`);
-        // Reconnect after 30 seconds
+        // Reconnect after configured delay
         setTimeout(() => {
             console.log(`[${config.username}] Attempting to reconnect...`);
             createBot(config, index);
-        }, 30000);
+        }, RECONNECT_DELAY);
     });
 
     bot.on('end', () => {
         console.log(`[${config.username}] ✗ Disconnected`);
-        // Reconnect after 30 seconds
+        // Reconnect after configured delay
         setTimeout(() => {
             console.log(`[${config.username}] Attempting to reconnect...`);
             createBot(config, index);
-        }, 30000);
+        }, RECONNECT_DELAY);
     });
 
     bot.on('chat', (username, message) => {
@@ -109,21 +112,22 @@ function createBot(config, index) {
     return bot;
 }
 
-// Start all bots with delay between each
+// ─── Start ──────────────────────────────────────────────────────────────────────
 console.log('='.repeat(50));
-console.log('Starting Minecraft Anti-AFK Bots');
-console.log(`Server: ${SERVER_HOST}:${SERVER_PORT}`);
-console.log(`Number of bots: ${botConfigs.length}`);
+console.log('  👻 phantom - Minecraft Anti-AFK Bot');
+console.log('='.repeat(50));
+console.log(`  Server : ${SERVER_HOST}:${SERVER_PORT}`);
+console.log(`  Bots   : ${botConfigs.map(b => b.username).join(', ')}`);
 console.log('='.repeat(50));
 
 botConfigs.forEach((config, index) => {
-    // Delay each bot connection by 5 seconds to avoid rate limiting
+    // Delay each bot connection to avoid rate limiting
     setTimeout(() => {
         createBot(config, index);
-    }, index * 5000);
+    }, index * CONNECTION_DELAY);
 });
 
-// Graceful shutdown
+// ─── Graceful Shutdown ──────────────────────────────────────────────────────────
 process.on('SIGINT', () => {
     console.log('\nShutting down bots...');
     activeBots.forEach(bot => {

@@ -1,12 +1,31 @@
 {
-    "name": "minecraft-bots",
+    "name": "phantom",
     "version": "1.0.0",
-    "description": "Minecraft bots that move randomly to avoid AFK detection",
+    "description": "👻 A stealthy Mineflayer bot that haunts your Minecraft server - simulating human-like movement to prevent AFK kicks",
     "main": "index.js",
     "scripts": {
         "start": "node index.js"
     },
+    "keywords": [
+        "minecraft",
+        "mineflayer",
+        "afk",
+        "bot",
+        "anti-afk",
+        "anti-kick"
+    ],
+    "author": "mohanadtr",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mohanadtr/minecraft-bot.git"
+    },
+    "bugs": {
+        "url": "https://github.com/mohanadtr/minecraft-bot/issues"
+    },
+    "homepage": "https://github.com/mohanadtr/minecraft-bot#readme",
     "dependencies": {
+        "dotenv": "^16.4.7",
         "mineflayer": "^4.33.0"
     }
 }
